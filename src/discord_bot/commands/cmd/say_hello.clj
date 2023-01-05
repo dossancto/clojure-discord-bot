@@ -1,11 +1,12 @@
 (ns discord-bot.commands.cmd.say-hello
-  (:require [clojure.string :as string]))
+  (:require [clojure.string :as string]
+            [discljord.formatting :as f]))
 
 (defn hello
   "Just say hello for someone"
   [somebody]
 
-  (str "Hey " somebody ", Whatsapp."))
+  {:content (str "Hey " (f/mention-user somebody) ", Whatsapp.")})
 
 (def about
   (str "This bot was made for study"))
@@ -15,5 +16,4 @@
   [msg]
 
   (let [join-msg (string/join " " msg)]
-    (str "||" join-msg "||")))
-
+    {:content (str "||" join-msg "||")}))

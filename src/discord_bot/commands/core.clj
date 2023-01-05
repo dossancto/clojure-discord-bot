@@ -1,6 +1,7 @@
 (ns discord-bot.commands.core
   (:require
    [clojure.string :as string]
+   [clojure.data.json :as json]
    [discljord.formatting :refer [mention-user]]
    [discord-bot.commands.cmd.say-hello :as cmd-hello]))
 
@@ -14,7 +15,7 @@
   "Return a message to Command that does not exists"
   [command author]
 
-  (str "This command does not exist ( " (string/join " " command) " ) " (mention-user author)))
+  {:content (str "This command does not exist ( " (string/join " " command) " ) " (mention-user author))})
 
 (defn tokenize-content
   "Splits the message and lowercase it."
@@ -36,14 +37,14 @@
 
 (defn run
   "Check wicth command run."
-  [content author]
+  [data]
 
-  (let [msg (valid-command content)]
+  (let [msg (valid-command (:content data))]
     (when-not (= msg false)
 
       (cond
-        (= "hello" (first msg)) (cmd-hello/hello (:username author))
+        (= "hello" (first msg)) (cmd-hello/hello (:author data))
         (= "about" (first msg))  cmd-hello/about
         (= "spoiler" (first msg))  (cmd-hello/spoiler (:tail (head-tail msg)))
-        :else (not-exist-command msg author)))))
+        :else (not-exist-command msg (:author data))))))
 

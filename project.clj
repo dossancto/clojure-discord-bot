@@ -5,6 +5,7 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.11.1"]
                  [lynxeyes/dotenv "1.1.0"]
+                 [org.clojure/data.json "0.2.6"]
                  [com.github.discljord/discljord "1.3.1"]]
 
   :main ^:skip-aot discord-bot.core

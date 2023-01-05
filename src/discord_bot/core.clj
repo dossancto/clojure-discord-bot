@@ -2,7 +2,7 @@
   (:require [clojure.edn :as edn]
             [clojure.core.async :refer [chan close!]]
             [discljord.messaging :as dm]
-            [dotenv :refer [env app-env]]
+            [dotenv :refer [env]]
             [discljord.connections :as discord-ws]
             [discord-bot.commands.core :as cmd]
             [discljord.events :refer [message-pump!]])
@@ -19,10 +19,11 @@
 (defmulti handle-event (fn [type _data] type))
 
 (defmethod handle-event :message-create
-  [_ {{bot :bot} :author :keys [channel-id content author]}]
+  [_ {{bot :bot} :author :keys [] :as data}]
 
   (when-not bot
-    (dm/create-message! (:rest @state) channel-id :content (cmd/run content author))))
+    (let [result (cmd/run data)]
+      (dm/create-message! (:rest @state) (:channel-id data) result))))
 
 (defmethod handle-event :ready
   [_ _]
