@@ -1,7 +1,6 @@
 (ns discord-bot.commands.core
   (:require
    [clojure.string :as string]
-   [clojure.data.json :as json]
    [discljord.formatting :refer [mention-user]]
    [discord-bot.commands.cmd.say-hello :as cmd-hello]))
 
@@ -22,7 +21,6 @@
   [message]
 
   (-> message
-      (string/lower-case)
       (string/split #" ")))
 
 (defn valid-command
@@ -35,6 +33,13 @@
       (:tail msg)
       false)))
 
+(defn format-command
+  "Format to analize if the message is a command name."
+  [message]
+
+  (-> (first message)
+      (string/lower-case)))
+
 (defn run
   "Check wicth command run."
   [data]
@@ -43,8 +48,8 @@
     (when-not (= msg false)
 
       (cond
-        (= "hello" (first msg)) (cmd-hello/hello (:author data))
-        (= "about" (first msg))  cmd-hello/about
-        (= "spoiler" (first msg))  (cmd-hello/spoiler (:tail (head-tail msg)))
+        (= "hello" (format-command msg)) (cmd-hello/hello (:author data))
+        (= "about" (format-command msg))  cmd-hello/about
+        (= "spoiler" (format-command msg))  (cmd-hello/spoiler (:tail (head-tail msg)))
         :else (not-exist-command msg (:author data))))))
 

@@ -22,8 +22,7 @@
   [_ {{bot :bot} :author :keys [] :as data}]
 
   (when-not bot
-    (let [result (cmd/run data)]
-      (dm/create-message! (:rest @state) (:channel-id data) result))))
+    (dm/create-message! (:rest @state) (:channel-id data) (cmd/run data))))
 
 (defmethod handle-event :ready
   [_ _]
