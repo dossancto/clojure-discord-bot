@@ -1,14 +1,9 @@
 (ns discord-bot.commands.core
   (:require
    [clojure.string :as string]
+   [discord-bot.utils :as u]
    [discljord.formatting :refer [mention-user]]
    [discord-bot.commands.cmd.say-hello :as cmd-hello]))
-
-(defn head-tail
-  "Split the message in head & tail"
-  [arr]
-  (let [[head & tail] arr]
-    {:head head :tail tail}))
 
 (defn not-exist-command
   "Return a message to Command that does not exists"
@@ -17,7 +12,7 @@
   {:content (str "This command does not exist ( " (string/join " " command) " ) " (mention-user author))})
 
 (defn tokenize-content
-  "Splits the message and lowercase it."
+  "Splits the message."
   [message]
 
   (-> message
@@ -28,7 +23,7 @@
   If is not a command retuns false."
   [content]
 
-  (let [msg (head-tail (tokenize-content content))]
+  (let [msg (u/head-tail (tokenize-content content))]
     (if (and (= "!" (:head msg)) (seq (:tail msg)))
       (:tail msg)
       false)))
@@ -50,6 +45,6 @@
       (cond
         (= "hello" (format-command msg)) (cmd-hello/hello (:author data))
         (= "about" (format-command msg))  cmd-hello/about
-        (= "spoiler" (format-command msg))  (cmd-hello/spoiler (:tail (head-tail msg)))
+        (= "spoiler" (format-command msg))  (cmd-hello/spoiler (:tail (u/head-tail msg)))
         :else (not-exist-command msg (:author data))))))
 
