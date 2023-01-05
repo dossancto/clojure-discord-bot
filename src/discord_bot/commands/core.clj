@@ -3,13 +3,14 @@
    [clojure.string :as string]
    [discord-bot.utils :as u]
    [discljord.formatting :refer [mention-user]]
+   [discord-bot.commands.cmd.embed :as cmd-embed]
    [discord-bot.commands.cmd.say-hello :as cmd-hello]))
 
 (defn not-exist-command
   "Return a message to Command that does not exists"
   [command author]
 
-  {:content (str "This command does not exist ( " (string/join " " command) " ) " (mention-user author))})
+  {:content (str "This command does not exist ( " command " ) " (mention-user author))})
 
 (defn tokenize-content
   "Splits the message."
@@ -45,6 +46,7 @@
       (cond
         (= "hello" (format-command msg)) (cmd-hello/hello (:author data))
         (= "about" (format-command msg))  cmd-hello/about
+        (= "embed" (format-command msg))  (cmd-embed/get-embed)
         (= "spoiler" (format-command msg))  (cmd-hello/spoiler (:tail (u/head-tail msg)))
-        :else (not-exist-command msg (:author data))))))
+        :else (not-exist-command (format-command msg) (:author data))))))
 
